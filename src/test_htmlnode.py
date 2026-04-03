@@ -1,10 +1,22 @@
-from htmlnode import HTMLNode
+from htmlnode import HTMLNode, LeafNode, ParentNode
+import unittest
 
-testpropDict = {"href":"https://www.google.com", "target":"_blank"}
-htmlnode = HTMLNode("h1","test value string", None, testpropDict)
+class TestHTMLNode(unittest.TestCase):
+    def test_leaf_to_html_p(self):
+        node = LeafNode("p", "Hello, world!")
+        self.assertEqual(node.to_html(), "<p>Hello, world!</p>")
 
-def test_props_html(htmlNode):
-    print(htmlNode.props_to_html())
-    
-test_props_html(htmlnode)
-print(repr(htmlnode))
+    def test_to_html_with_children(self):
+        child_node = LeafNode("span", "child")
+        parent_node = ParentNode("div", [child_node])
+        self.assertEqual(parent_node.to_html(), "<div><span>child</span></div>")
+
+    def test_to_html_with_grandchildren(self):
+        grandchild_node = LeafNode("b", "grandchild")
+        child_node = ParentNode("span", [grandchild_node])
+        parent_node = ParentNode("div", [child_node])
+        self.assertEqual(
+            parent_node.to_html(),
+            "<div><span><b>grandchild</b></span></div>",
+        )
+
